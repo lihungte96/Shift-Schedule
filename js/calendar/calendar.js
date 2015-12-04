@@ -14,9 +14,10 @@
         this.view_date = new Date();
         this.schedule_type = [
             { id: 0, color: '#555555', word: '休假' },
-            { id: 1, color: '#cc0000', word: '早班' },
+            { id: 1, color: 'pink', word: '早班' },
             { id: 2, color: '#00cc00', word: '小夜' },
-            { id: 3, color: '#0000cc', word: '大夜' }];
+            { id: 3, color: '#0000cc', word: '大夜' },
+            { id: 4, color: '#cc00cc', word: '其他' }];
         this.schedule_code = -1;
     };
     Calendar.prototype = {
@@ -78,7 +79,6 @@
                             resolve();
                         }
                     };
-                    //resolve();
                 };
             }).bind(this));
         },
@@ -188,10 +188,14 @@
             a_day.classList.add(read_data.schedule_type_word);
             a_day.innerHTML += '<br/>' + read_data.schedule_type_word;
             if (a_day.classList.contains('this_mounth')) {
-                var i = 1;
-                for (i in this.schedule_type) {
+                for (var i in this.schedule_type) {
                     if (read_data.schedule_type_word == this.schedule_type[i].word) {
                         a_day.style.backgroundColor = this.schedule_type[i].color;
+                        break;
+                    }
+                    else {
+                        if (i == this.schedule_type.length - 1)
+                            a_day.style.backgroundColor = this.schedule_type[this.schedule_type.length - 1].color;
                     }
                 }
             }
@@ -213,8 +217,6 @@
                     }
                     if (event.target.id == 'more') {
                         $('#menutable').toggle();
-                        //$('#previous_mounth').toggle();
-                        //$('#next_mounth').toggle();
                         $('#previous_mounth')[0].style.display = 'inline-block';
                         $('#next_mounth')[0].style.display = 'inline-block';
                         if ($('#menutable')[0].style.display == 'block')
@@ -230,8 +232,6 @@
                         $('#edittable').toggle();
                         $('#previous_mounth').toggle();
                         $('#next_mounth').toggle();
-                        //$('#previous_mounth')[0].style.display = 'none';
-                        //$('#next_mounth')[0].style.display = 'none';
                         $('#edit')[0].style.backgroundColor = '#FF7F12';
                         this.paint_edittable();
                         this.schedule_code = -1;
@@ -280,19 +280,29 @@
             }
         },
         save_schedule(id) {
+            var word = this.schedule_type[this.schedule_code].word;
+            if (this.schedule_code == this.schedule_type.length - 1)
+                word = this.special_input();
             var a_day = document.getElementById(id);
             for (var i in this.schedule_type) {
                 a_day.classList.remove(this.schedule_type[i].word);
             }
             a_day.classList.add(this.schedule_type[this.schedule_code].word);
-            a_day.innerHTML = id.slice(id.lastIndexOf('/') + 1, id.length) + '<br/>' + this.schedule_type[this.schedule_code].word;
+            a_day.innerHTML = id.slice(id.lastIndexOf('/') + 1, id.length) + '<br/>' + word;
             if (a_day.classList.contains('this_mounth')) {
                 a_day.style.backgroundColor = this.schedule_type[this.schedule_code].color;
             }
             var year = id.slice(0, id.indexOf('/', 0));
             var mounth = id.slice(id.indexOf('/', 0) + 1, id.lastIndexOf('/'));
-            var data = { ssn: id, year: year, mounth: mounth, schedule_type_word: this.schedule_type[this.schedule_code].word };
+            var data = { ssn: id, year: year, mounth: mounth, schedule_type_word: word };
             this.save(data);
+        },
+        special_input() {
+            var person = prompt("請輸入行事曆名稱", "其他");
+            if (person != null) {
+                return person;
+            }
+            return '其他';
         },
         save(data) {
             var transaction = this.db.transaction(["date"], "readwrite");

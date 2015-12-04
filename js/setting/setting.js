@@ -22,7 +22,7 @@
                 var panel = document.getElementById('panel');
                 for (var i in this.schedule_type) {
                     var option = document.createElement('div');
-                    if (i == 0) {
+                    if (i == 0 || i == this.schedule_type.length - 1) {
                         var text = document.createElement('p');
                         text.innerHTML = this.schedule_type[i].word;
                     } else {
@@ -105,7 +105,7 @@
         },
         save(data) {
             for (var i in this.schedule_type) {
-                if (i != 0) {
+                if (i != 0 && i != this.schedule_type.length - 1) {
                     this.schedule_type[i].word = $('.' + i)[0].value;
                 }
                 this.schedule_type[i].color = $('.' + i)[1].value;
