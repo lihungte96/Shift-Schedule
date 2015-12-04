@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1">
+    <title>Shift Schedule</title>
+
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/calendar/main.js"></script>
+    <script charset="utf-8" src="js/calendar/calendar.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="css/calendar.css" />
+</head>
+<body>
+    <div id="up_toolbar">
+        <p id="previous_mounth" class="previous_mounth"><< 上個月 </p>
+        <p id="display_mounth"></p>
+        <p id="next_mounth" class="next_mounth"> 下個月 >></p>
+    </div>
+    <div id="display"></div>
+    <table id="down_toolbar">
+        <tr>
+            <td>
+                <button id="more" />
+            </td>
+            <td id="menutable">
+                <button id="setting" />
+                <button id="edit" />
+            </td>
+            <td>
+                <p id="return"></p>
+            </td>
+        </tr>
+    </table>
+    <div id="edittable">
+        <button id="break" value="">休假</button>
+        <button id="morning" value="早班" />
+        <button id="night" value="晚班" />
+        <button id="great_night" value="大夜班" />
+    </div>
+</body>
+</html>
