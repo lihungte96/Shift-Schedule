@@ -6,14 +6,16 @@
 div#up_toolbar {
     margin: 0;
     padding: 0;
+    display: block;
     background-color: #119DE8;
     text-align: center;
+    vertical-align: central;
 }
 
     div#up_toolbar > p {
         margin: 0;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
         width: 28%;
         display: inline-block;
         font-size: 20px;
@@ -35,48 +37,43 @@ table#display_table {
     border-width: 1px;
 }
 
-    table#display_table > tr {
+    table#display_table tr.week td {
+        height: 15px;
+        font-size: 10px;
+        color: black;
+        border:none;
+    }
+
+    table#display_table tr {
         margin: 0;
         padding: 0;
     }
 
-        table#display_table > tr > td {
-            margin: 0;
-            padding: 0;
-            height: 45px;
-            text-align: center;
-            border: solid;
-            border-color: gray;
-            border-width: 1px;
-            font-size: 16px;
-            background-color: white;
-            color: #999999;
+    table#display_table > tr > td {
+        margin: 0;
+        padding: 0;
+        height: 45px;
+        text-align: center;
+        border: solid;
+        border-color: gray;
+        border-width: 1px;
+        font-size: 16px;
+        background-color: white;
+        color: #999999;
+    }
+
+        table#display_table > tr > td.this_mounth {
+            background-color: #FFC2FF;
+            border-color: black;
+            color: black;
         }
 
-            table#display_table > tr > td.this_mounth {
-                background-color: #555555;
-                border-color: black;
-                color: white;
-            }
-
-            /*table#display_table > tr > td.this_mounth.早班 {
-                    background-color: blue;
-                }
-
-                table#display_table > tr > td.this_mounth.晚班 {
-                    background-color: green;
-                }
-
-                table#display_table > tr > td.this_mounth.大夜 {
-                    background-color: deeppink;
-                }*/
-
-            table#display_table > tr > td.today {
-                border-color: red;
-                border-width: 3px;
-                color: red;
-                font-weight: bold;
-            }
+        table#display_table > tr > td.today {
+            border-color: red;
+            border-width: 3px;
+            color: red;
+            font-weight: bold;
+        }
 
 table#down_toolbar {
     width: 100%;
@@ -88,7 +85,7 @@ table#down_toolbar {
         //background-color: #FF7F12;
     }
 
-    table#down_toolbar tr :nth-child(1) {
+    table#down_toolbar tr td:nth-child(1) {
         width: 64px;
     }
 
@@ -103,24 +100,26 @@ table#down_toolbar {
         background-image: url(../pic/more.png);
     }
 
-    table#down_toolbar #menutable {
+    table#down_toolbar .menutable {
         display: none;
-        width: 130px;
+        width: 65px;
     }
 
-        table#down_toolbar #menutable #setting {
+        table#down_toolbar .menutable #setting {
+            display: inline;
             background-image: url(../pic/setting.png);
         }
 
-        table#down_toolbar #menutable #edit {
+        table#down_toolbar .menutable #edit {
+            display: inline;
             background-image: url(../pic/edit.png);
         }
 
-    table#down_toolbar td:nth-child(3) {
+    table#down_toolbar td:nth-child(3+n) {
         background-color: #119DE8;
     }
 
-    table#down_toolbar #return {
+    table#down_toolbar tr td p {
         display: block;
         margin: 0;
         padding: 0;
@@ -128,7 +127,6 @@ table#down_toolbar {
         width: 100%;
         height: 64px;
         text-align: right;
-        vertical-align: central;
     }
 
 div#edittable {

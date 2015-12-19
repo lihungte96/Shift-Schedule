@@ -6,9 +6,9 @@
      *  @constructor
      *  @this {Calendar}
      */
+    var schedule_type;
     var Setting = function () {
         this.schedule_type = [];
-        this.schedule_code = 0;
     };
     Setting.prototype = {
         /**
@@ -22,6 +22,8 @@
                 var panel = document.getElementById('panel');
                 for (var i in this.schedule_type) {
                     var option = document.createElement('div');
+                    option.id = this.schedule_type[i].id;
+
                     if (i == 0 || i == this.schedule_type.length - 1) {
                         var text = document.createElement('p');
                         text.innerHTML = this.schedule_type[i].word;
@@ -32,19 +34,33 @@
                     text.setAttribute('class', this.schedule_type[i].id);
                     text.style.width = '30%';
                     text.style.display = 'inline-block';
-                    option.id = this.schedule_type[i].id;
+
                     var a = document.createElement('p');
                     a.innerHTML = ':';
                     a.style.display = 'inline-block';
+
                     var color = document.createElement('input');
                     color.setAttribute('value', this.schedule_type[i].color);
                     color.setAttribute('class', this.schedule_type[i].id);
                     color.setAttribute('type', 'color');
                     color.style.width = '30%';
                     color.style.display = 'inline-block';
+
+                    if (i == 0) {
+                        var salary = document.createElement('p');
+                        salary.innerHTML = this.schedule_type[i].salary;
+                    } else {
+                        var salary = document.createElement('input');
+                        salary.setAttribute('value', this.schedule_type[i].salary);
+                    }
+                    salary.setAttribute('class', this.schedule_type[i].id);
+                    salary.style.width = '30%';
+                    salary.style.display = 'inline-block';
+
                     option.appendChild(text);
                     option.appendChild(a);
                     option.appendChild(color);
+                    option.appendChild(salary);
                     panel.appendChild(option);
                 }
             }).bind(this));
@@ -109,7 +125,11 @@
                     this.schedule_type[i].word = $('.' + i)[0].value;
                 }
                 this.schedule_type[i].color = $('.' + i)[1].value;
+                if (i != 0) {
+                    this.schedule_type[i].salary = parseInt($('.' + i)[2].value);
+                }
             }
+
             var transaction = this.db.transaction(["color"], "readwrite");
 
             transaction.onerror = function (event) {

@@ -10,15 +10,17 @@
     var db = null;
     var schedule_type;
     var schedule_code;
+    var salary;
     var Calendar = function () {
         this.view_date = new Date();
         this.schedule_type = [
-            { id: 0, color: '#555555', word: '休假' },
-            { id: 1, color: 'pink', word: '早班' },
-            { id: 2, color: '#00cc00', word: '小夜' },
-            { id: 3, color: '#0000cc', word: '大夜' },
-            { id: 4, color: '#cc00cc', word: '其他' }];
+            { id: 0, color: '#FFC2FF', word: '休假', salary: 0 },
+            { id: 1, color: '#FFFF00', word: '白班', salary: 300 },
+            { id: 2, color: '#0BF80B', word: '小夜', salary: 400 },
+            { id: 3, color: '#2AEAEA', word: '大夜', salary: 500 },
+            { id: 4, color: '#cc00cc', word: '其他', salary: 1000 }];
         this.schedule_code = -1;
+        this.salary = [0, 0, 0, 0, 0];
     };
     Calendar.prototype = {
         /**
@@ -52,7 +54,7 @@
                         alert('db upgrade error')
                     };
 
-                    var dateobjectStore = calendar_object.db.createObjectStore("date", { keyPath: "ssn" });
+                    var dateobjectStore = calendar_object.db.createObjectStore("date", { keyPath: "date" });
                     dateobjectStore.createIndex("year", "year", { unique: false });
                     dateobjectStore.createIndex("mounth", "mounth", { unique: false });
 
@@ -62,20 +64,22 @@
                     for (var i in calendar_object.schedule_type) {
                         colorobjectStore.add(calendar_object.schedule_type[i])
                     }
-                    reject();
+                    resolve();
                 };
                 DBOpenRequest.onsuccess = function (event) {
                     console.log('db success');
                     calendar_object.db = DBOpenRequest.result;
                     var objectStore = calendar_object.db.transaction("color").objectStore("color");
                     calendar_object.schedule_type = [];
-
+                    calendar_object.salary = [];
                     objectStore.openCursor().onsuccess = function (event) {
                         var cursor = event.target.result;
                         if (cursor) {
                             calendar_object.schedule_type.push(cursor.value);
+                            calendar_object.salary.push(cursor.value.salary);
                             cursor.continue();
                         } else {
+                            calendar_object.salary.push(0);
                             resolve();
                         }
                     };
@@ -95,9 +99,34 @@
             var display = document.getElementById('display');
             display.innerHTML = '';
             var a_mounth = document.createElement('table');
+            var week = document.createElement('tr');
+            week.classList.add('week');
+            var day0 = document.createElement('td');
+            day0.innerHTML = '日';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '一';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '二';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '三 ';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '四';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '五';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '六';
+            week.appendChild(day0);
+            a_mounth.appendChild(week);
             display.appendChild(a_mounth);
             a_mounth.id = 'display_table';
             var color_class = "previous_mounth";
+            var today = new Date();
             for (var i = 1; i <= 6; i++) {
                 var a_week = document.createElement('tr');
                 a_mounth.appendChild(a_week);
@@ -116,72 +145,15 @@
                     a_day.classList.add(color_class);
                     a_day.textContent = this.view_date.getDate();
                     this.read(id).then(this.show_schedule.bind(this)).catch(this.show_schedule.bind(this));
+                    if (today.toDateString() == this.view_date.toDateString())
+                        document.getElementById(today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate()).classList.add('today');
                 }
             }
             this.view_date.setMonth(this.view_date.getMonth() - 1);
-            var today = new Date();
-            if (today.getMonth() - 1 == this.view_date.getMonth() || today.getMonth() == this.view_date.getMonth() || today.getMonth() + 1 == this.view_date.getMonth())
-                document.getElementById(today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate()).classList.add('today');
-            var a = this.show_schedule_check(this);
-            console.log(a);
         },
         paint_offline() {
             console.log('paint_offline');
-            var display_mounth = document.getElementById('display_mounth');
-            display_mounth.textContent = (this.view_date.getFullYear()) + '年' + (this.view_date.getMonth() + 1) + '月';
 
-            this.view_date.setDate(0);
-            while (this.view_date.getDay() > 0) {
-                this.view_date.setDate(this.view_date.getDate() - 1);
-            }
-
-            var display = document.getElementById('display');
-            var a_mounth = document.createElement('table');
-            a_mounth.id = 'display_table';
-            var color_class = "previous_mounth";
-            for (var i = 1; i <= 6; i++) {
-                var a_week = document.createElement('tr');
-                for (var j = 0; j < 7; j++, this.view_date.setDate(this.view_date.getDate() + 1)) {
-                    if (this.view_date.getDate() == 1) {
-                        if (color_class == "previous_mounth") {
-                            color_class = "this_mounth";
-                        }
-                        else
-                            color_class = "next_mounth";
-                    }
-                    var a_day = document.createElement('td');
-                    var id = this.view_date.getFullYear() + '/' + (this.view_date.getMonth() + 1) + '/' + this.view_date.getDate();
-                    a_day.setAttribute('id', id);
-                    a_day.classList.add(color_class);
-                    a_day.textContent = this.view_date.getDate();
-                    a_day.classList.add(this.schedule_type[0].word);
-                    a_day.innerHTML += '<br/>' + this.schedule_type[0].word;
-                    a_week.appendChild(a_day);
-                }
-                a_mounth.appendChild(a_week);
-            }
-            this.view_date.setMonth(this.view_date.getMonth() - 1);
-            display.innerHTML = '';
-            display.appendChild(a_mounth);
-            var today = new Date();
-            document.getElementById(today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate()).classList.add('today');
-        },
-        show_schedule_check(calendar_object) {
-            var objectStore = this.db.transaction("date").objectStore("date");
-            objectStore.openCursor().onsuccess = function (event) {
-                var cursor = event.target.result;
-                if (cursor) {
-                    console.log("Name for SSN " + cursor.value.mounth + " is " + cursor.value.schedule_type_word);
-                    if (cursor.value.mounth - 1 == calendar_object.view_date.getMonth() || cursor.value.mounth == calendar_object.view_date.getMonth() || cursor.value.mounth + 1 == calendar_object.view_date.getMonth()) {
-                        return true;
-                        cursor.continue();
-                    }
-                }
-                else {
-                    console.log("No more entries!");
-                    return false;
-                }
-            };
         },
         show_schedule(read_data) {
             var a_day = document.getElementById(read_data.id);
@@ -191,36 +163,42 @@
                 for (var i in this.schedule_type) {
                     if (read_data.schedule_type_word == this.schedule_type[i].word) {
                         a_day.style.backgroundColor = this.schedule_type[i].color;
+                        this.salary[this.salary.length - 1] += this.salary[i];
                         break;
                     }
                     else {
-                        if (i == this.schedule_type.length - 1)
+                        if (i == this.schedule_type.length - 1) {
                             a_day.style.backgroundColor = this.schedule_type[this.schedule_type.length - 1].color;
+                            this.salary[this.salary.length - 1] += this.salary[this.salary.length - 2];
+
+                        }
                     }
                 }
             }
+            document.getElementById('salary').innerHTML = '$:' + this.salary[this.salary.length - 1];
         },
         handleEvent(event) {
             switch (event.type) {
                 case 'click':
                     if (event.target.classList.contains('previous_mounth')) {
                         if (this.schedule_code == -1) {
+                            this.salary[this.salary.length - 1] = 0;
                             this.view_date.setMonth(this.view_date.getMonth() - 1);
                             this.paint_online();
                         }
                     }
                     if (event.target.classList.contains('next_mounth')) {
                         if (this.schedule_code == -1) {
+                            this.salary[this.salary.length - 1] = 0;
                             this.view_date.setMonth(this.view_date.getMonth() + 1);
                             this.paint_online();
                         }
                     }
                     if (event.target.id == 'more') {
-                        $('#menutable').toggle();
                         $('#previous_mounth')[0].style.display = 'inline-block';
                         $('#next_mounth')[0].style.display = 'inline-block';
-                        if ($('#menutable')[0].style.display == 'block')
-                            $('#menutable')[0].style.display = 'inline';
+                        $('.menutable')[0].style.backgroundImage = '../pic/setting.png'
+                        $('.menutable').toggle();
                         $('#edittable')[0].style.display = 'none';
                         $('#edit')[0].style.backgroundColor = '#FF7F12';
                         this.schedule_code = -1;
@@ -285,16 +263,23 @@
                 word = this.special_input();
             var a_day = document.getElementById(id);
             for (var i in this.schedule_type) {
-                a_day.classList.remove(this.schedule_type[i].word);
+                if (a_day.classList.contains(this.schedule_type[i].word)) {
+                    a_day.classList.remove(this.schedule_type[i].word)
+                    if (a_day.classList.contains('this_mounth')) {
+                        this.salary[this.salary.length - 1] -= this.salary[i];
+                    }
+                }
             }
             a_day.classList.add(this.schedule_type[this.schedule_code].word);
             a_day.innerHTML = id.slice(id.lastIndexOf('/') + 1, id.length) + '<br/>' + word;
             if (a_day.classList.contains('this_mounth')) {
                 a_day.style.backgroundColor = this.schedule_type[this.schedule_code].color;
+                this.salary[this.salary.length - 1] += this.salary[this.schedule_code];
             }
             var year = id.slice(0, id.indexOf('/', 0));
             var mounth = id.slice(id.indexOf('/', 0) + 1, id.lastIndexOf('/'));
-            var data = { ssn: id, year: year, mounth: mounth, schedule_type_word: word };
+            var data = { date: id, year: year, mounth: mounth, schedule_type_word: word };
+            document.getElementById('salary').innerHTML = '$:' + this.salary[this.salary.length - 1];
             this.save(data);
         },
         special_input() {
