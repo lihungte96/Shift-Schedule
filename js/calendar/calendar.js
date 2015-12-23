@@ -91,11 +91,6 @@
             var display_mounth = document.getElementById('display_mounth');
             display_mounth.textContent = (this.view_date.getFullYear()) + '年' + (this.view_date.getMonth() + 1) + '月';
 
-            this.view_date.setDate(0);
-            while (this.view_date.getDay() > 0) {
-                this.view_date.setDate(this.view_date.getDate() - 1);
-            }
-
             var display = document.getElementById('display');
             display.innerHTML = '';
             var a_mounth = document.createElement('table');
@@ -127,26 +122,26 @@
             a_mounth.id = 'display_table';
             var color_class = "previous_mounth";
             var today = new Date();
-            for (var i = 1; i <= 6; i++) {
+            var calendar_core_data = core_paint(this.view_date);
+            for (var i = 1, index = 0; i <= 6; i++) {
                 var a_week = document.createElement('tr');
                 a_mounth.appendChild(a_week);
-                for (var j = 0; j < 7; j++, this.view_date.setDate(this.view_date.getDate() + 1)) {
+                for (var j = 0; j < 7; j++, index++) {
                     var a_day = document.createElement('td');
                     a_week.appendChild(a_day);
-                    if (this.view_date.getDate() == 1) {
+                    if (calendar_core_data[index].date == 1) {
                         if (color_class == "previous_mounth") {
                             color_class = "this_mounth";
                         }
                         else
                             color_class = "next_mounth";
                     }
-                    var id = this.view_date.getFullYear() + '/' + (this.view_date.getMonth() + 1) + '/' + this.view_date.getDate();
-                    a_day.setAttribute('id', id);
+                    a_day.setAttribute('id', calendar_core_data[index].id);
                     a_day.classList.add(color_class);
-                    a_day.textContent = this.view_date.getDate();
-                    this.read(id).then(this.show_schedule.bind(this)).catch(this.show_schedule.bind(this));
+                    a_day.textContent = calendar_core_data[index].date;
+                    this.read(calendar_core_data[index].id).then(this.show_schedule.bind(this)).catch(this.show_schedule.bind(this));
                     if (today.toDateString() == this.view_date.toDateString())
-                        document.getElementById(today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate()).classList.add('today');
+                        document.getElementById(today.toDateString()).classList.add('today');
                 }
             }
             this.view_date.setMonth(this.view_date.getMonth() - 1);
