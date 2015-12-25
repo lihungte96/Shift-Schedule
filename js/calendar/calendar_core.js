@@ -16,3 +16,4 @@
     }
     return a;
 }
+module.exports.core_paint = core_paint;
