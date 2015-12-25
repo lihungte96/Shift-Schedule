@@ -64,7 +64,7 @@
                     for (var i in calendar_object.schedule_type) {
                         colorobjectStore.add(calendar_object.schedule_type[i])
                     }
-                    resolve();
+                    reject();
                 };
                 DBOpenRequest.onsuccess = function (event) {
                     console.log('db success');
@@ -148,6 +148,67 @@
         },
         paint_offline() {
             console.log('paint_offline');
+            var display_mounth = document.getElementById('display_mounth');
+            display_mounth.textContent = (this.view_date.getFullYear()) + '年' + (this.view_date.getMonth() + 1) + '月';
+
+            var display = document.getElementById('display');
+            display.innerHTML = '';
+            var a_mounth = document.createElement('table');
+            var week = document.createElement('tr');
+            week.classList.add('week');
+            var day0 = document.createElement('td');
+            day0.innerHTML = '日';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '一';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '二';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '三 ';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '四';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '五';
+            week.appendChild(day0);
+            var day0 = document.createElement('td');
+            day0.innerHTML = '六';
+            week.appendChild(day0);
+            a_mounth.appendChild(week);
+            display.appendChild(a_mounth);
+            a_mounth.id = 'display_table';
+            var color_class = "previous_mounth";
+            var today = new Date();
+            var calendar_core_data = core_paint(this.view_date);
+            for (var i = 1, index = 0; i <= 6; i++) {
+                var a_week = document.createElement('tr');
+                a_mounth.appendChild(a_week);
+                for (var j = 0; j < 7; j++, index++) {
+                    var a_day = document.createElement('td');
+                    a_week.appendChild(a_day);
+                    if (calendar_core_data[index].date == 1) {
+                        if (color_class == "previous_mounth") {
+                            color_class = "this_mounth";
+                        }
+                        else
+                            color_class = "next_mounth";
+                    }
+                    a_day.setAttribute('id', calendar_core_data[index].id);
+                    a_day.classList.add(color_class);
+                    a_day.textContent = calendar_core_data[index].date;
+                    if (today.toDateString() == this.view_date.toDateString())
+                        document.getElementById(today.toDateString()).classList.add('today');
+                }
+            }
+            for (var i = 0; i < 42; i++) {
+                var a_day = document.getElementById(calendar_core_data[i].id);
+                a_day.innerHTML += "<br/>休假";
+                //this.read(calendar_core_data[i].id).then(this.show_schedule.bind(this)).catch(this.show_schedule.bind(this));
+            }
+            this.view_date.setMonth(this.view_date.getMonth() - 1);
 
         },
         show_schedule(read_data) {
