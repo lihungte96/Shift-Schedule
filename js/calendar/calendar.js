@@ -140,7 +140,7 @@
                     a_day.classList.add(color_class);
                     a_day.textContent = calendar_core_data[index].date;
                     this.read(calendar_core_data[index].id).then(this.show_schedule.bind(this)).catch(this.show_schedule.bind(this));
-                    if (today.toDateString() == this.view_date.toDateString())
+                    if (today.toDateString() == calendar_core_data[index].id)
                         document.getElementById(today.toDateString()).classList.add('today');
                 }
             }
@@ -199,14 +199,10 @@
                     a_day.setAttribute('id', calendar_core_data[index].id);
                     a_day.classList.add(color_class);
                     a_day.textContent = calendar_core_data[index].date;
-                    if (today.toDateString() == this.view_date.toDateString())
+                    a_day.innerHTML += "<br/>休假";
+                    if (today.toDateString() == calendar_core_data[index].id)
                         document.getElementById(today.toDateString()).classList.add('today');
                 }
-            }
-            for (var i = 0; i < 42; i++) {
-                var a_day = document.getElementById(calendar_core_data[i].id);
-                a_day.innerHTML += "<br/>休假";
-                //this.read(calendar_core_data[i].id).then(this.show_schedule.bind(this)).catch(this.show_schedule.bind(this));
             }
             this.view_date.setMonth(this.view_date.getMonth() - 1);
 
