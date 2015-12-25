@@ -226,12 +226,12 @@
                     }
                     if (this.schedule_code != -1) {
                         if (''.contains) {//for firefox os
-                            if (event.target.id.contains('/')) {
+                            if (event.target.id.contains(' ')) {
                                 this.save_schedule(event.target.id);
                             }
                         }
                         else {//for web browser
-                            if (event.target.id.includes('/')) {
+                            if (event.target.id.includes(' ')) {
                                 this.save_schedule(event.target.id);
                             }
                         }
@@ -257,6 +257,9 @@
             if (this.schedule_code == this.schedule_type.length - 1)
                 word = this.special_input();
             var a_day = document.getElementById(id);
+            var year = id.slice(11, id.length);
+            var mounth = id.slice(4, 7);
+            var date = id.slice(8, 10);
             for (var i in this.schedule_type) {
                 if (a_day.classList.contains(this.schedule_type[i].word)) {
                     a_day.classList.remove(this.schedule_type[i].word)
@@ -266,13 +269,11 @@
                 }
             }
             a_day.classList.add(this.schedule_type[this.schedule_code].word);
-            a_day.innerHTML = id.slice(id.lastIndexOf('/') + 1, id.length) + '<br/>' + word;
+            a_day.innerHTML = date + '<br/>' + word;
             if (a_day.classList.contains('this_mounth')) {
                 a_day.style.backgroundColor = this.schedule_type[this.schedule_code].color;
                 this.salary[this.salary.length - 1] += this.salary[this.schedule_code];
             }
-            var year = id.slice(0, id.indexOf('/', 0));
-            var mounth = id.slice(id.indexOf('/', 0) + 1, id.lastIndexOf('/'));
             var data = { date: id, year: year, mounth: mounth, schedule_type_word: word };
             document.getElementById('salary').innerHTML = '$:' + this.salary[this.salary.length - 1];
             this.save(data);
